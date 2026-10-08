@@ -40,7 +40,7 @@ yarn-error.log*
 
 # cloudflare
 .wrangler/
-.dev.vars*
+.dev.vars
 
 # local-only working files
 /design/

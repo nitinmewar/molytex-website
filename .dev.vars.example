@@ -1,0 +1,3 @@
+# Copy to .dev.vars for `wrangler dev`. Values below are Cloudflare's Turnstile test secret and a placeholder inbox.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+NOTIFY_TO=owner@example.com
