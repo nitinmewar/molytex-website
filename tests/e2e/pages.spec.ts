@@ -126,6 +126,22 @@ test.describe("Certifications page", () => {
     await expectImagesLoaded(page);
   });
 
+  test("every View certificate link serves a PDF", async ({ page, request }) => {
+    await page.goto("/certifications");
+    const hrefs = await page.getByRole("link", { name: /view certificate/i }).evaluateAll((els) =>
+      els.map((el) => el.getAttribute("href")),
+    );
+    // CDSCO has no public certificate PDF yet, so its card shows no link.
+    expect(hrefs).toHaveLength(3);
+    const cdsco = page.locator("article", { hasText: "CDSCO Registration Certificate" });
+    await expect(cdsco.getByRole("link")).toHaveCount(0);
+    for (const href of hrefs) {
+      const res = await request.get(href!);
+      expect(res.status(), href!).toBe(200);
+      expect(res.headers()["content-type"], href!).toContain("application/pdf");
+    }
+  });
+
   test("CTA buttons open contact and link to products", async ({ page }) => {
     await page.goto("/certifications");
     await expect(page.getByRole("link", { name: "Explore Products" })).toHaveAttribute("href", "/products");
