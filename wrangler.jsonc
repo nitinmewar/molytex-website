@@ -22,8 +22,7 @@
     {
       "binding": "DB",
       "database_name": "molytex",
-      // Set from the output of `npx wrangler d1 create molytex` (DEPLOY.md step 6).
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "ca6f8e71-5dd8-4c14-bf15-0d83253cc86a",
       "migrations_dir": "migrations"
     }
   ],
