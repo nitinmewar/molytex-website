@@ -7,6 +7,8 @@ export async function sendInquiry(formData: FormData): Promise<InquiryResult> {
   // The id lets the server ignore a repeated submit (double click, retry) instead of storing it twice.
   const body: Record<string, string> = { id: crypto.randomUUID() };
   for (const key of FIELDS) body[key] = String(formData.get(key) ?? "");
+  // The Turnstile widget writes its token into this hidden field inside the form.
+  body.turnstileToken = String(formData.get("cf-turnstile-response") ?? "");
 
   try {
     const res = await fetch("/api/inquiry", {

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
 
 const sendInquiry = vi.fn();
 vi.mock("@/lib/sendInquiry", () => ({ sendInquiry: (fd: FormData) => sendInquiry(fd) }));
@@ -12,6 +12,7 @@ function fill(label: string, value: string) {
 
 describe("ConsultationForm", () => {
   beforeEach(() => sendInquiry.mockReset());
+  afterEach(cleanup);
 
   it("sends the fields the inquiry action expects and confirms success", async () => {
     sendInquiry.mockResolvedValue({ success: true });
@@ -31,6 +32,14 @@ describe("ConsultationForm", () => {
     expect(fd.get("phone")).toBe("+91 98765 43210");
     expect(fd.get("message")).toBe("Need surgical consumables");
     expect(await screen.findByRole("status")).toHaveTextContent(/thank you/i);
+  });
+
+  it("loads the Turnstile script only after the visitor focuses the form", () => {
+    const turnstileScripts = () => document.querySelectorAll('script[src*="challenges.cloudflare.com/turnstile"]').length;
+    render(<ConsultationForm />);
+    expect(turnstileScripts()).toBe(0);
+    fireEvent.focus(screen.getByLabelText("Your name"));
+    expect(turnstileScripts()).toBe(1);
   });
 
   it("shows the server error and keeps the form when submission fails", async () => {

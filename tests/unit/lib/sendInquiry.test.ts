@@ -23,7 +23,9 @@ describe("sendInquiry", () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(sendInquiry(form({ ...fields, extra: "ignored" }))).resolves.toEqual({ success: true });
+    await expect(
+      sendInquiry(form({ ...fields, extra: "ignored", "cf-turnstile-response": "tok-123" })),
+    ).resolves.toEqual({ success: true });
 
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe("/api/inquiry");
@@ -32,6 +34,8 @@ describe("sendInquiry", () => {
     const body = JSON.parse(init.body);
     expect(body).toMatchObject(fields);
     expect(body).not.toHaveProperty("extra");
+    expect(body.turnstileToken).toBe("tok-123");
+    expect(body).not.toHaveProperty("cf-turnstile-response");
     expect(body.id).toMatch(/^[0-9a-f-]{36}$/);
   });
 

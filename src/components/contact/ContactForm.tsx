@@ -2,21 +2,15 @@
 
 import { useState, type FormEvent } from "react";
 import { sendInquiry } from "@/lib/sendInquiry";
-
-const PRODUCT_OPTIONS = [
-  "Surgical Consumables",
-  "Orthopedic Products",
-  "Rehabilitation Aids",
-  "Hospital Disposables",
-  "Infection Control Products",
-  "Medical Accessories",
-  "General / Multiple",
-] as const;
+import { LIMITS, PRODUCT_OPTIONS } from "@/lib/inquiry";
+import { Turnstile } from "./Turnstile";
 
 export function ContactForm({ defaultEmail = "" }: { defaultEmail?: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  const [engaged, setEngaged] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,6 +25,7 @@ export function ContactForm({ defaultEmail = "" }: { defaultEmail?: string }) {
       setSubmitted(true);
     } else {
       setError(result.error);
+      setAttempt((n) => n + 1);
     }
   }
 
@@ -44,25 +39,25 @@ export function ContactForm({ defaultEmail = "" }: { defaultEmail?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form-grid mt-24" noValidate>
+    <form onSubmit={handleSubmit} onFocus={() => setEngaged(true)} className="form-grid mt-24" noValidate>
       <div className="form-row">
         <div className="form-field">
           <label htmlFor="c-name">Name <span className="req">*</span></label>
-          <input className="form-control" id="c-name" name="name" placeholder="Your full name" required />
+          <input className="form-control" id="c-name" name="name" placeholder="Your full name" maxLength={LIMITS.name} required />
         </div>
         <div className="form-field">
           <label htmlFor="c-org">Organization <span className="req">*</span></label>
-          <input className="form-control" id="c-org" name="organization" placeholder="Hospital / clinic / company" required />
+          <input className="form-control" id="c-org" name="organization" placeholder="Hospital / clinic / company" maxLength={LIMITS.organization} required />
         </div>
       </div>
       <div className="form-row">
         <div className="form-field">
           <label htmlFor="c-email">Email <span className="req">*</span></label>
-          <input className="form-control" id="c-email" name="email" type="email" placeholder="you@organization.com" defaultValue={defaultEmail} required />
+          <input className="form-control" id="c-email" name="email" type="email" placeholder="you@organization.com" defaultValue={defaultEmail} maxLength={LIMITS.email} required />
         </div>
         <div className="form-field">
           <label htmlFor="c-phone">Phone</label>
-          <input className="form-control" id="c-phone" name="phone" type="tel" placeholder="+91 ..." />
+          <input className="form-control" id="c-phone" name="phone" type="tel" placeholder="+91 ..." maxLength={LIMITS.phone} />
         </div>
       </div>
       <div className="form-field">
@@ -76,8 +71,9 @@ export function ContactForm({ defaultEmail = "" }: { defaultEmail?: string }) {
       </div>
       <div className="form-field">
         <label htmlFor="c-msg">Message <span className="req">*</span></label>
-        <textarea className="form-control" id="c-msg" name="message" placeholder="Tell us about your requirements…" required />
+        <textarea className="form-control" id="c-msg" name="message" placeholder="Tell us about your requirements…" maxLength={LIMITS.message} required />
       </div>
+      {engaged && <Turnstile key={attempt} />}
       {error && (
         <div style={{ color: "var(--green-700)", fontWeight: 600, fontSize: ".95rem" }}>
           {error}
