@@ -1,3 +1,4 @@
+import { createExecutionContext, waitOnExecutionContext } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker from "../index";
@@ -20,6 +21,7 @@ let sent: Record<string, unknown>[];
 let emailFails: boolean;
 let rateLimited: boolean;
 let turnstilePasses: boolean;
+let emailGate: Promise<void> | null;
 
 function testEnv(): Env {
   return {
@@ -28,6 +30,7 @@ function testEnv(): Env {
     NOTIFY_TO: OWNER,
     EMAIL: {
       send: async (msg: Record<string, unknown>) => {
+        await emailGate;
         if (emailFails) throw new Error("email down");
         sent.push(msg);
         return { messageId: "m1" };
@@ -40,16 +43,21 @@ function testEnv(): Env {
 type IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 const req = (url: string, init?: RequestInit) => new Request(url, init) as IncomingRequest;
 
-function post(body: unknown, init: RequestInit = {}) {
-  return worker.fetch(
-    req("https://molytexproducts.com/api/inquiry", {
+function postRequest(body: unknown, init: RequestInit = {}) {
+  return req("https://molytexproducts.com/api/inquiry", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "203.0.113.7" },
       body: typeof body === "string" ? body : JSON.stringify(body),
       ...init,
-    }),
-    testEnv(),
-  );
+    });
+}
+
+// Runs the request and waits for background work (the email) so tests see the final state.
+async function post(body: unknown, init: RequestInit = {}) {
+  const ctx = createExecutionContext();
+  const res = await worker.fetch(postRequest(body, init), testEnv(), ctx);
+  await waitOnExecutionContext(ctx);
+  return res;
 }
 
 async function rows() {
@@ -62,6 +70,7 @@ beforeEach(async () => {
   emailFails = false;
   rateLimited = false;
   turnstilePasses = true;
+  emailGate = null;
   await env.DB.exec("DELETE FROM inquiries");
   vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
     if (String(input instanceof Request ? input.url : input) !== SITEVERIFY) throw new Error(`unexpected fetch ${input}`);
@@ -89,6 +98,22 @@ describe("POST /api/inquiry", () => {
     });
     expect(sent[0].text).toContain("We need 5,000 masks a month.");
     expect(sent[0].text).toContain("+91 98765 43210");
+  });
+
+  it("answers as soon as the inquiry is saved, before the email is sent", async () => {
+    let release!: () => void;
+    emailGate = new Promise<void>((resolve) => (release = resolve));
+    const ctx = createExecutionContext();
+
+    const res = await worker.fetch(postRequest(valid), testEnv(), ctx);
+    expect(res.status).toBe(200);
+    expect(sent).toHaveLength(0);
+    expect((await rows())[0]).toMatchObject({ id: valid.id, emailed: 0 });
+
+    release();
+    await waitOnExecutionContext(ctx);
+    expect(sent).toHaveLength(1);
+    expect((await rows())[0]).toMatchObject({ emailed: 1 });
   });
 
   it("verifies Turnstile with the secret, token and visitor IP", async () => {
@@ -151,7 +176,7 @@ describe("POST /api/inquiry", () => {
   });
 
   it("rejects wrong method, content type, oversized and malformed bodies", async () => {
-    const get = await worker.fetch(req("https://molytexproducts.com/api/inquiry"), testEnv());
+    const get = await worker.fetch(req("https://molytexproducts.com/api/inquiry"), testEnv(), createExecutionContext());
     expect(get.status).toBe(405);
     expect((await post(valid, { headers: { "Content-Type": "text/plain" } })).status).toBe(415);
     expect((await post({ ...valid, message: "x".repeat(20_000) })).status).toBe(413);
@@ -160,7 +185,7 @@ describe("POST /api/inquiry", () => {
   });
 
   it("returns 404 for other API paths", async () => {
-    const res = await worker.fetch(req("https://molytexproducts.com/api/other", { method: "POST" }), testEnv());
+    const res = await worker.fetch(req("https://molytexproducts.com/api/other", { method: "POST" }), testEnv(), createExecutionContext());
     expect(res.status).toBe(404);
   });
 });
