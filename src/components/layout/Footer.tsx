@@ -25,7 +25,7 @@ export function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <Image
-              src="/assets/molytex-logo-white.png"
+              src="/assets/molytex-logo-white.webp"
               alt="Molytex Healthcare"
               width={91}
               height={45}

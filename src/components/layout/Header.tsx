@@ -37,7 +37,7 @@ export function Header() {
         <nav className="nav" aria-label="Primary">
           <Link className="brand" href="/" aria-label="Molytex Healthcare home">
             <Image
-              src="/assets/molytex-logo-header.png"
+              src="/assets/molytex-logo-header.webp"
               alt="Molytex Healthcare"
               width={787}
               height={371}
@@ -95,7 +95,7 @@ export function Header() {
       >
         <div className="drawer-head">
           <Image
-            src="/assets/molytex-logo-white.png"
+            src="/assets/molytex-logo-white.webp"
             alt="Molytex Healthcare"
             width={69}
             height={34}

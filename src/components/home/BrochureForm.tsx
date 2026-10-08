@@ -6,7 +6,7 @@ export function BrochureForm() {
     <section className="consult-sec bg-grey">
       <div className="consult-card">
         <div className="consult-media">
-          <Image src="/assets/contact-team.jpg" alt="Molytex team member packing surgical masks" fill sizes="(max-width: 920px) 100vw, 664px" style={{ objectFit: "cover", objectPosition: "-145.5px 50%" }} />
+          <Image src="/assets/contact-team.webp" alt="Molytex team member packing surgical masks" fill sizes="(max-width: 920px) 100vw, 664px" style={{ objectFit: "cover", objectPosition: "-145.5px 50%" }} />
         </div>
         <div className="consult-panel">
           <span className="eyebrow">Schedule Consultation</span>

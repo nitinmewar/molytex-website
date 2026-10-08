@@ -5,7 +5,7 @@ import { ContactButton } from "@/components/contact/ContactButton";
 export function CommitmentBand() {
   return (
     <section className="commit">
-      <Image src="/assets/commitment-team.jpg" alt="Molytex team at work in a clean production facility" fill style={{ objectFit: "cover" }} sizes="100vw" />
+      <Image src="/assets/commitment-team.webp" alt="Molytex team at work in a clean production facility" fill style={{ objectFit: "cover" }} sizes="100vw" />
       <div className="wrap">
         <div className="commit-card">
           <span className="eyebrow on-dark">Our Commitment</span>

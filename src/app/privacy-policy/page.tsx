@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
     <main>
       <div className="phero-img">
         <Image
-          src="/assets/hero-1.png"
+          src="/assets/hero-1.webp"
           alt="Molytex team packing surgical face masks"
           fill
           priority

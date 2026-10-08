@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { submitInquiry } from "@/lib/actions/submitInquiry";
+import { sendInquiry } from "@/lib/sendInquiry";
 
 export function ConsultationForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -12,7 +12,7 @@ export function ConsultationForm() {
     e.preventDefault();
     setSending(true);
     setError("");
-    const result = await submitInquiry(new FormData(e.currentTarget));
+    const result = await sendInquiry(new FormData(e.currentTarget));
     setSending(false);
     if (result.success) setSubmitted(true);
     else setError(result.error);

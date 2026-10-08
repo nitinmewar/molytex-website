@@ -22,7 +22,7 @@ const slides: { eyebrow: string; heading: string; subtitle: string; support: str
       "Supporting modern healthcare through dependable supply and procurement partnerships.",
     primaryCta: { label: "Contact Us" },
     secondaryCta: { label: "Explore our Products", href: "/products" },
-    image: "/assets/hero-1.png",
+    image: "/assets/hero-1.webp",
   },
   {
     eyebrow: "Quality & Compliance First",
@@ -33,7 +33,7 @@ const slides: { eyebrow: string; heading: string; subtitle: string; support: str
       "A compliance-aligned approach across every product category we supply.",
     primaryCta: { label: "Our Quality Commitment", href: "/certifications" },
     secondaryCta: { label: "Explore our Products", href: "/products" },
-    image: "/assets/about-team.jpg",
+    image: "/assets/about-team.webp",
   },
   {
     eyebrow: "Pan-India Distribution",
@@ -44,7 +44,7 @@ const slides: { eyebrow: string; heading: string; subtitle: string; support: str
       "Working alongside hospitals, clinics, and healthcare institutions nationwide.",
     primaryCta: { label: "Partner With Us" },
     secondaryCta: { label: "About Molytex", href: "/about" },
-    image: "/assets/contact-team.jpg",
+    image: "/assets/contact-team.webp",
   },
 ];
 
