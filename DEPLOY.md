@@ -10,7 +10,7 @@ The site is fixed pages plus one contact form.
 - The contact form sends its data to `/api/inquiry`. That is a small Cloudflare Worker. It checks the visitor is human (Turnstile), saves the message in a Cloudflare D1 database, and emails a notification to the owner.
 - Email sent to `info@molytexproducts.com` is forwarded to the owner's personal inbox by Cloudflare Email Routing.
 
-Everything lives in one Cloudflare account. On the free plan, the expected cost is $0 a month (see step 9 for the one exception to check).
+Everything lives in one Cloudflare account. On the free plan, the expected cost is $0 a month (see step 10 for the one exception to check).
 
 ---
 
@@ -45,7 +45,7 @@ Why: without it, bots fill the contact form and the owner's inbox with spam.
 
 Done when: you have both keys.
 - Send the **Site key** to the developer. It is public and goes into the website.
-- Keep the **Secret key** private. Paste it yourself in step 7. Never send it over chat or email.
+- Keep the **Secret key** private. Paste it yourself in step 9. Never send it over chat or email.
 
 ### Step 3: Let the developer deploy from their computer
 
@@ -90,20 +90,27 @@ The site cannot launch with these gaps:
 
 ## Part B: Code changes (developer)
 
-Each item is one small pull request, with tests written first. The full design is in `spec/deployment.md`.
+Each item is a pull request with tests written first. The full design is in `spec/deployment.md`.
 
 - [x] Switch every email address and site URL to `molytexproducts.com`.
-- [ ] First commit and push to the repository from step 4.
-- [ ] Remove Sanity (unused), switch Next.js to static export, convert large photos to WebP.
-- [ ] Build the `/api/inquiry` Worker and the D1 table.
-- [ ] Connect both contact forms to `/api/inquiry` and add the Turnstile check.
-- [ ] Add `wrangler.jsonc` (Cloudflare config) and security headers.
+- [x] First commit and push to the repository from step 4.
+- [x] Remove Sanity (unused), switch Next.js to static export, convert large photos to WebP. (PR #1)
+- [x] Build the `/api/inquiry` Worker and the D1 table, connect both forms, add Turnstile, `wrangler.jsonc` and security headers. (PR #2)
+
+To try the whole site locally, including the forms:
+
+```bash
+cp .dev.vars.example .dev.vars
+npm run preview
+```
+
+Open http://localhost:8787. Emails are not sent locally; wrangler writes them to `.wrangler/tmp/email/`.
 
 ---
 
-## Part C: First deploy (developer, with Part A done)
+## Part C: First deploy (developer, with Part A done and both PRs merged)
 
-These commands run from the project folder. Each one is safe to re-run.
+Run these from the project folder on `main`.
 
 ### Step 6: Create the database
 
@@ -111,21 +118,15 @@ These commands run from the project folder. Each one is safe to re-run.
 npx wrangler d1 create molytex
 ```
 
-This creates an empty database named `molytex`. It prints a `database_id`. That id goes into `wrangler.jsonc`.
+This creates an empty database named `molytex` and prints a `database_id`. Open `wrangler.jsonc` and replace `00000000-0000-0000-0000-000000000000` with that id. Commit that one-line change.
 
-```bash
-npx wrangler d1 migrations apply molytex --remote
-```
+### Step 7: Clear the way for the domain
 
-This creates the `inquiries` table. It only applies changes that have not run yet.
+Cloudflare can only attach the site to `molytexproducts.com` and `www` if no other record already uses those names.
 
-### Step 7: Store the Turnstile secret
-
-```bash
-npx wrangler secret put TURNSTILE_SECRET
-```
-
-The terminal asks for the value. The owner pastes the **Secret key** from step 2. It is stored encrypted in Cloudflare and never appears in the code.
+1. Cloudflare dashboard → **molytexproducts.com** → **DNS** → **Records**.
+2. Delete any **A**, **AAAA** or **CNAME** record whose name is `molytexproducts.com` (or `@`) or `www`. These are usually parking-page records from the registrar.
+3. Do **not** touch **MX** or **TXT** records. Email Routing needs them.
 
 ### Step 8: Build and deploy
 
@@ -133,13 +134,33 @@ The terminal asks for the value. The owner pastes the **Secret key** from step 2
 npm run deploy
 ```
 
-This builds the pages and uploads the site and the Worker. `wrangler.jsonc` also attaches `molytexproducts.com` and `www.molytexproducts.com`, so Cloudflare sets up the DNS records and HTTPS certificate itself.
+This does three things in order:
 
-Done when: `https://molytexproducts.com` loads the homepage.
+1. Builds the pages into `out/` with the real Turnstile site key.
+2. Creates the `inquiries` table in the live database (only the first time; later runs skip it).
+3. Uploads the site and the Worker, and attaches `molytexproducts.com` and `www.molytexproducts.com`. Cloudflare creates the DNS records and the HTTPS certificate itself.
 
-### Step 9: Check email sending cost
+Done when: `https://molytexproducts.com` loads the homepage. The certificate can take a few minutes the first time.
 
-The Worker sends notifications with Cloudflare's email binding. If the first form test fails with an error about plan or sending limits, the account needs **Workers Paid** ($5/month), or the Worker must send only to the verified inbox from step 1. The developer decides this with the owner at this point. Everything else stays on the free plan.
+### Step 9: Store the two secrets
+
+```bash
+npx wrangler secret put TURNSTILE_SECRET
+```
+
+The terminal asks for a value. The owner pastes the Turnstile **Secret key** from step 2.
+
+```bash
+npx wrangler secret put NOTIFY_TO
+```
+
+Enter the owner's inbox, the **same verified address** from step 1. Notifications go there.
+
+Both are stored encrypted in Cloudflare and never appear in the code. Until they are set, the forms answer "Please complete the verification and try again."
+
+### Step 10: Check email sending
+
+Submit one form on the live site (Part D). If the email does not arrive, open the Worker's **Logs** tab (Workers & Pages → `molytex` → Logs) and look for `inquiry notification failed`. If the error mentions the plan, the account needs **Workers Paid** ($5/month); decide this with the owner. The message is saved in D1 either way.
 
 ---
 

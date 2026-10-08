@@ -2,11 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { sendInquiry } from "@/lib/sendInquiry";
+import { Turnstile } from "@/components/contact/Turnstile";
 
 export function ConsultationForm() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  const [engaged, setEngaged] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -15,7 +18,10 @@ export function ConsultationForm() {
     const result = await sendInquiry(new FormData(e.currentTarget));
     setSending(false);
     if (result.success) setSubmitted(true);
-    else setError(result.error);
+    else {
+      setError(result.error);
+      setAttempt((n) => n + 1);
+    }
   }
 
   if (submitted) {
@@ -27,7 +33,7 @@ export function ConsultationForm() {
   }
 
   return (
-    <form className="consult-form" onSubmit={handleSubmit} noValidate>
+    <form className="consult-form" onSubmit={handleSubmit} onFocus={() => setEngaged(true)} noValidate>
       <div className="consult-field">
         <label htmlFor="k-name">Your name</label>
         <input id="k-name" name="name" placeholder="e.g. John Smith" autoComplete="name" maxLength={120} required />
@@ -50,6 +56,7 @@ export function ConsultationForm() {
       </div>
       {error && <p className="consult-error full" role="alert">{error}</p>}
       <div className="full">
+        {engaged && <Turnstile key={attempt} />}
         <button type="submit" className="btn btn-green consult-submit" disabled={sending}>
           {sending ? "Sending…" : "Schedule a Free Consultation"}
         </button>
