@@ -75,7 +75,17 @@ function notification(q: Inquiry, env: Env) {
   };
 }
 
-async function handleInquiry(request: Request, env: Env): Promise<Response> {
+async function notifyOwner(inquiry: Inquiry, env: Env): Promise<void> {
+  try {
+    await env.EMAIL.send(notification(inquiry, env));
+    await env.DB.prepare("UPDATE inquiries SET emailed = 1 WHERE id = ?1").bind(inquiry.id).run();
+  } catch (err) {
+    // The inquiry is saved; emailed = 0 marks it for follow-up. No personal data in the log.
+    console.error("inquiry notification failed", { id: inquiry.id, error: String(err) });
+  }
+}
+
+async function handleInquiry(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   if (request.method !== "POST") return fail(405, "Method not allowed.", { Allow: "POST" });
   if (!request.headers.get("Content-Type")?.toLowerCase().startsWith("application/json")) return fail(415, "Expected JSON.");
   if (Number(request.headers.get("Content-Length") ?? 0) > MAX_BODY_BYTES) return fail(413, "Message is too large.");
@@ -110,20 +120,15 @@ async function handleInquiry(request: Request, env: Env): Promise<Response> {
   // A repeated id (double click, retry) was already stored and emailed.
   if (insert.meta.changes === 0) return reply(200, { ok: true });
 
-  try {
-    await env.EMAIL.send(notification(inquiry, env));
-    await env.DB.prepare("UPDATE inquiries SET emailed = 1 WHERE id = ?1").bind(inquiry.id).run();
-  } catch (err) {
-    // The inquiry is saved; emailed = 0 marks it for follow-up. No personal data in the log.
-    console.error("inquiry notification failed", { id: inquiry.id, error: String(err) });
-  }
+  // The visitor only waits for the save; sending email takes seconds, so it runs after the response.
+  ctx.waitUntil(notifyOwner(inquiry, env));
   return reply(200, { ok: true });
 }
 
 export default {
-  async fetch(request, env): Promise<Response> {
+  async fetch(request, env, ctx): Promise<Response> {
     const { pathname } = new URL(request.url);
-    if (pathname === "/api/inquiry") return handleInquiry(request, env);
+    if (pathname === "/api/inquiry") return handleInquiry(request, env, ctx);
     return fail(404, "Not found.");
   },
 } satisfies ExportedHandler<Env>;
