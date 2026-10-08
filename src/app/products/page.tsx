@@ -95,7 +95,7 @@ export default function ProductsPage() {
           <div className="wrap prow-grid">
             <div className="prow-media">
               <Image
-                src={`/assets/products/${c.image}.png`}
+                src={`/assets/products/${c.image}.webp`}
                 alt={c.alt}
                 fill
                 sizes="(max-width: 920px) 100vw, 516px"

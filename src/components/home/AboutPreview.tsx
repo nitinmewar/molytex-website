@@ -8,7 +8,7 @@ export function AboutPreview() {
         <div className="about-grid">
           <div className="about-media">
             <div className="frame">
-              <Image src="/assets/about-team.jpg" alt="Molytex Healthcare team packaging medical products" fill style={{ objectFit: "cover" }} sizes="(max-width: 900px) 100vw, 50vw" priority />
+              <Image src="/assets/about-team.webp" alt="Molytex Healthcare team packaging medical products" fill style={{ objectFit: "cover" }} sizes="(max-width: 900px) 100vw, 50vw" priority />
             </div>
             <div className="badge">
               <div className="n">100<span className="grn">%</span></div>

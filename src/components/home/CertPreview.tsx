@@ -2,9 +2,9 @@ import Image from "next/image";
 
 const certs = [
   { tag: "Quality Management", title: "ISO 9001", desc: "Ensures consistent quality standards", logo: "/assets/cert-iso9001.jpg", pdf: "/certificates/iso-9001.pdf", w: 255, h: 170, dx: -7 },
-  { tag: "Medical Devices", title: "ISO 13485", desc: "Certified medical device processes", logo: "/assets/cert-iso13485.png", pdf: "/certificates/iso-13485.pdf", w: 157, h: 170 },
+  { tag: "Medical Devices", title: "ISO 13485", desc: "Certified medical device processes", logo: "/assets/cert-iso13485.webp", pdf: "/certificates/iso-13485.pdf", w: 157, h: 170 },
   { tag: "Regulatory Approval", title: "CDSCO Registration Certificate", desc: "Approved for regulated products", logo: "/assets/cert-cdsco.jpg", pdf: "/certificates/cdsco-registration.pdf", w: 240, h: 170 },
-  { tag: "Startup Recognition", title: "DIPP Startup Certificate", desc: "Recognized under Startup India", logo: "/assets/cert-dpiit.png", pdf: "/certificates/dpiit-startup.pdf", w: 227, h: 76 },
+  { tag: "Startup Recognition", title: "DIPP Startup Certificate", desc: "Recognized under Startup India", logo: "/assets/cert-dpiit.webp", pdf: "/certificates/dpiit-startup.pdf", w: 227, h: 76 },
 ];
 
 export function CertPreview() {
