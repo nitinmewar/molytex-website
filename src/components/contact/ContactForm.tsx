@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { submitInquiry } from "@/lib/actions/submitInquiry";
+import { sendInquiry } from "@/lib/sendInquiry";
 
 const PRODUCT_OPTIONS = [
   "Surgical Consumables",
@@ -24,7 +24,7 @@ export function ContactForm({ defaultEmail = "" }: { defaultEmail?: string }) {
     setError("");
 
     const fd = new FormData(e.currentTarget);
-    const result = await submitInquiry(fd);
+    const result = await sendInquiry(fd);
 
     setSending(false);
     if (result.success) {

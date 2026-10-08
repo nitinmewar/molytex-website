@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
 import { render, screen, fireEvent, act, cleanup } from "@testing-library/react";
 
-vi.mock("@/lib/actions/submitInquiry", () => ({ submitInquiry: vi.fn() }));
+vi.mock("@/lib/sendInquiry", () => ({ sendInquiry: vi.fn() }));
 
 import { ContactDialog, openContact } from "@/components/contact/ContactDialog";
 import { CtaBand } from "@/components/home/CtaBand";

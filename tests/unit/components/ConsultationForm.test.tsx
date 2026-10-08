@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
-const submitInquiry = vi.fn();
-vi.mock("@/lib/actions/submitInquiry", () => ({ submitInquiry: (fd: FormData) => submitInquiry(fd) }));
+const sendInquiry = vi.fn();
+vi.mock("@/lib/sendInquiry", () => ({ sendInquiry: (fd: FormData) => sendInquiry(fd) }));
 
 import { ConsultationForm } from "@/components/home/ConsultationForm";
 
@@ -11,10 +11,10 @@ function fill(label: string, value: string) {
 }
 
 describe("ConsultationForm", () => {
-  beforeEach(() => submitInquiry.mockReset());
+  beforeEach(() => sendInquiry.mockReset());
 
   it("sends the fields the inquiry action expects and confirms success", async () => {
-    submitInquiry.mockResolvedValue({ success: true });
+    sendInquiry.mockResolvedValue({ success: true });
     render(<ConsultationForm />);
     fill("Your name", "Asha Rao");
     fill("Email address", "asha@hospital.in");
@@ -23,8 +23,8 @@ describe("ConsultationForm", () => {
     fill("Your message", "Need surgical consumables");
     fireEvent.click(screen.getByRole("button", { name: /schedule a free consultation/i }));
 
-    await waitFor(() => expect(submitInquiry).toHaveBeenCalledOnce());
-    const fd: FormData = submitInquiry.mock.calls[0][0];
+    await waitFor(() => expect(sendInquiry).toHaveBeenCalledOnce());
+    const fd: FormData = sendInquiry.mock.calls[0][0];
     expect(fd.get("name")).toBe("Asha Rao");
     expect(fd.get("organization")).toBe("City Hospital");
     expect(fd.get("email")).toBe("asha@hospital.in");
@@ -34,7 +34,7 @@ describe("ConsultationForm", () => {
   });
 
   it("shows the server error and keeps the form when submission fails", async () => {
-    submitInquiry.mockResolvedValue({ success: false, error: "Please enter a valid email address." });
+    sendInquiry.mockResolvedValue({ success: false, error: "Please enter a valid email address." });
     render(<ConsultationForm />);
     fireEvent.click(screen.getByRole("button", { name: /schedule a free consultation/i }));
 
