@@ -1,0 +1,174 @@
+/* Inner pages (About, Products, Certifications, Privacy). Values follow the Figma "Final" frames at 1470px.
+   Selectors are compound or unique: globals.css and this file load in no guaranteed order. */
+
+/* ---------- Page hero ---------- */
+.phero{ position:relative; overflow:hidden; color:#fff; padding-block:90px; }
+.phero .wrap{ position:relative; z-index:1; }
+.phero-about{
+  background:
+    radial-gradient(1100px 328.88px at 88% -10%, rgba(106,191,31,.18), transparent 60%),
+    radial-gradient(900px 394.66px at 0 120%, rgba(0,97,204,.55), transparent 60%),
+    linear-gradient(180deg, var(--blue-800), var(--blue-900));
+}
+.phero-products{
+  background:
+    radial-gradient(1176px 237.13px at 60% 30%, rgba(0,87,184,.45), transparent 70%),
+    linear-gradient(180deg, rgba(0,43,92,.6), rgba(0,43,92,0)),
+    var(--blue-900);
+}
+.phero-certs{
+  background:
+    radial-gradient(1100px 383.8px at 88% -10%, rgba(106,191,31,.18), transparent 60%),
+    radial-gradient(900px 460.6px at 0 120%, rgba(0,97,204,.55), transparent 60%),
+    linear-gradient(180deg, var(--blue-800), var(--blue-900));
+}
+.crumbs{ display:flex; gap:8px; font-size:14px; line-height:20px; color:rgba(255,255,255,.6); }
+.crumbs a:hover{ color:#fff; }
+.crumbs [aria-current]{ color:rgba(255,255,255,.9); }
+.phero h1{ color:#fff; font-size:56px; line-height:60.48px; letter-spacing:-1.12px; margin-top:24px; }
+.phero .phero-lead{ font-size:18px; line-height:29.25px; color:rgba(255,255,255,.75); max-width:672px; text-wrap:wrap; }
+.phero .eyebrow.on-dark{ line-height:20.59px; }
+
+.phero-products .eyebrow{ margin-top:40.21px; }
+.phero-products h1{ font-size:54.4px; line-height:58.75px; letter-spacing:-1.088px; margin-top:16px; }
+.phero-products .phero-lead{ max-width:576px; }
+
+.phero-certs .crumbs{ font-size:13.2px; line-height:22px; gap:6px; }
+.phero-certs .eyebrow{ margin-top:32.21px; }
+.phero-certs h1{ font-size:58.4px; line-height:63px; letter-spacing:-1.46px; margin-top:15.25px; }
+.phero-certs .phero-lead{ font-size:20.8px; line-height:34px; max-width:738px; }
+
+.phero-img{ position:relative; height:401.46px; overflow:hidden; }
+
+/* Homepage cert padding (119px) leaves room for the product panel's notch; inner pages have none. */
+.phero ~ .cert-sec{ padding-top:90.5px; }
+
+/* ---------- Section headings ---------- */
+.ph-head{ display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:8.21px; }
+.ph-head .eyebrow{ line-height:20.59px; }
+.ph-head h2{ color:var(--ink); font-size:38.4px; line-height:41.47px; letter-spacing:-.768px; margin-top:15.25px; }
+.ph-head.lg h2{ font-size:40.8px; line-height:44px; letter-spacing:-.816px; }
+.ph-head p{ font-size:18.4px; line-height:29.9px; color:var(--ink-2); text-wrap:wrap; }
+
+/* ---------- Buttons at Figma size ---------- */
+.btn.btn-fig{ font-size:15.5px; line-height:25.61px; letter-spacing:.163px; padding:15.244px 25.332px; border-width:1px; gap:9.3px; }
+.btn.btn-fig svg{ width:16.29px; height:16.29px; }
+.btn.btn-fig-lg{ font-size:16.3px; line-height:26.93px; letter-spacing:.163px; padding:17.95px 31.508px 18.86px; border-width:1px; gap:9.79px; }
+.btn.btn-fig-lg svg{ width:17.13px; height:17.13px; }
+.btn.btn-ink{ --btn-fg:var(--ink); }
+.btn.btn-outline-white{ border-color:rgba(255,255,255,.45); }
+
+/* ---------- Dark CTA band ---------- */
+.pcta{ color:#fff; text-align:center; padding-block:90px; }
+.pcta h2{ color:#fff; font-size:38.4px; line-height:41.47px; letter-spacing:-.768px; }
+.pcta p{ font-size:18px; line-height:29.25px; color:rgba(255,255,255,.7); max-width:576px; margin-inline:auto; text-wrap:wrap; }
+.pcta .pcta-actions{ display:flex; justify-content:center; flex-wrap:wrap; gap:14px; padding-top:7.89px; }
+.pcta-about{
+  background:
+    radial-gradient(900px 424.7px at 80% -20%, rgba(106,191,31,.15), transparent 60%),
+    linear-gradient(180deg, var(--blue-800), var(--blue-900));
+}
+.pcta-about p{ max-width:500px; }
+.pcta-products{ background:var(--blue-900); padding-top:90.73px; }
+.pcta-products h2{ font-size:36px; line-height:38.88px; letter-spacing:-.72px; }
+.pcta-products p{ line-height:28px; max-width:512px; margin-top:1.1px; }
+.pcta-products .pcta-actions{ padding-top:9.55px; }
+.pcta-certs{
+  padding-block:80.6px 76.61px;
+  background:
+    radial-gradient(900px 480.03px at 85% -20%, rgba(106,191,31,.16), transparent 60%),
+    linear-gradient(120deg, var(--blue-800), var(--blue-900));
+}
+.pcta-certs h2{ font-size:41.6px; line-height:44.93px; letter-spacing:-.832px; }
+.pcta-certs p{ font-size:19.2px; line-height:31.2px; max-width:588px; margin-top:.6px; }
+.pcta-certs .pcta-actions{ padding-top:29.55px; }
+
+/* ---------- Shared card ---------- */
+.pcard{
+  background:#fff; border:1px solid var(--line); border-radius:20px;
+  box-shadow:0 2px 4px rgba(10,31,61,.06), 0 1px 1px rgba(10,31,61,.04);
+}
+
+/* ---------- About: Mission & Vision ---------- */
+.mv-sec{ padding-block:90px; }
+.mv-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px; margin-top:39.99px; }
+.mv-card{ padding:40px; }
+.mv-ic{ width:48px; height:48px; border-radius:999px; display:grid; place-items:center; background:rgba(0,87,184,.1); }
+.mv-ic.green{ background:rgba(180,231,23,.1); }
+.mv-card h3{ font-size:20px; line-height:21.6px; letter-spacing:-.4px; color:var(--ink); margin-top:16px; }
+.mv-card p{ font-size:17px; line-height:27.63px; color:var(--ink); text-wrap:wrap; }
+
+/* ---------- About: Core values ---------- */
+.values-sec{ padding-block:90px; }
+.values-grid{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; margin-top:48px; }
+.value-card{ padding:28px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.value-card h3{ font-size:18px; line-height:19.44px; letter-spacing:-.36px; color:var(--ink); margin-top:16px; }
+.value-card p{ font-size:14px; line-height:22.75px; color:var(--ink); white-space:pre-line; }
+
+/* ---------- Products ---------- */
+.cat-bar{
+  position:sticky; top:66px; z-index:50;
+  background:rgba(255,255,255,.95); backdrop-filter:blur(4px); border-bottom:1px solid var(--line);
+}
+.cat-bar-inner{ max-width:1120px; margin-inline:auto; height:63px; display:flex; align-items:center; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.cat-bar a{ flex-shrink:0; padding:8px 16px; border-radius:999px; font-size:13.6px; line-height:22.44px; font-weight:600; color:var(--ink); transition:background .2s, color .2s; }
+.cat-bar a:hover{ background:var(--blue-tint); color:var(--blue); }
+
+.prow{ padding-block:90px; scroll-margin-top:130px; }
+.prow.grey{ background:var(--bg); }
+.prow-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:80px; align-items:center; }
+.prow-media{ position:relative; aspect-ratio:516/387; border-radius:20px; overflow:hidden; }
+.prow.flip .prow-media{ order:2; }
+.prow-copy{ padding-top:1.5px; }
+.prow-num{ display:inline-flex; padding:4px 12px; border-radius:999px; background:var(--blue-tint); color:var(--blue); font-size:12.5px; line-height:20.59px; font-weight:700; }
+.prow-copy h2{ font-size:33.6px; line-height:36.29px; letter-spacing:-.672px; color:var(--ink); margin-top:15.25px; }
+.prow-copy p{ font-size:16.8px; line-height:27.3px; color:var(--muted); text-wrap:wrap; }
+.prow-list{ display:flex; flex-direction:column; gap:12px; }
+.prow-list li{ display:flex; gap:12px; font-size:17px; line-height:28px; color:var(--ink-2); }
+.prow-list img{ margin-top:2px; flex-shrink:0; }
+.prow-copy .btn{ margin-top:8px; }
+
+/* ---------- Certifications ---------- */
+.commit-sec{ padding-block:90px; }
+.commit-sec .ph-head{ max-width:720px; margin-inline:auto; }
+.commit-sec .ph-head p{ margin-top:0; max-width:691px; }
+
+.pillars-sec{ padding-block:90px; }
+.pillars-sec .ph-head{ padding-top:8.22px; }
+.pillars-sec .ph-head h2{ margin-top:15.74px; }
+.pillars-sec .ph-head p{ margin-top:.81px; max-width:608px; }
+.pillars-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-top:39.94px; }
+.pillar{ padding:36px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+.pillar-ic{ width:56px; height:56px; border-radius:999px; display:grid; place-items:center; background:var(--green-tint); border:1px solid rgba(180,231,23,.2); margin-bottom:19.5px; }
+.pillar h3{ font-size:17.6px; line-height:19px; letter-spacing:-.352px; color:var(--ink); margin-bottom:-.5px; }
+.pillar p{ font-size:14.1px; line-height:22.88px; color:var(--muted); max-width:282px; text-wrap:wrap; }
+
+/* ---------- Privacy ---------- */
+.policy{ padding-block:105.25px 119.22px; }
+.policy h1{ text-align:center; color:var(--ink); font-size:40.8px; line-height:44px; letter-spacing:-.816px; }
+.policy-body{ margin-top:40px; text-align:center; font-size:18.4px; line-height:29.9px; color:var(--ink-2); }
+.policy-body h2{ font:inherit; letter-spacing:0; color:inherit; margin-top:29.9px; }
+.policy-body p{ text-wrap:wrap; }
+.policy-body > p + p{ margin-top:29.9px; }
+.policy-body a:hover{ color:var(--blue); }
+
+/* ---------- Responsive ---------- */
+@media (max-width:1180px){
+  .values-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:920px){
+  .phero, .mv-sec, .values-sec, .prow, .commit-sec, .pillars-sec, .pcta{ padding-block:64px; }
+  .phero h1, .phero-products h1, .phero-certs h1{ font-size:clamp(2.1rem,7vw,3rem); line-height:1.08; }
+  .phero-img{ height:clamp(180px,32vw,300px); }
+  .mv-grid, .prow-grid, .pillars-grid{ grid-template-columns:minmax(0,1fr); }
+  .prow-grid{ gap:32px; }
+  .prow.flip .prow-media{ order:0; }
+  .ph-head h2, .ph-head.lg h2, .pcta h2, .pcta-certs h2, .prow-copy h2{ font-size:clamp(1.6rem,6vw,2.2rem); line-height:1.12; }
+  .policy{ padding-block:64px; }
+  .policy h1{ font-size:clamp(1.8rem,7vw,2.4rem); line-height:1.1; }
+  .policy-body{ font-size:16.5px; line-height:1.7; }
+  .cat-bar-inner{ padding-inline:var(--gutter); }
+}
+@media (max-width:560px){
+  .values-grid{ grid-template-columns:minmax(0,1fr); }
+}

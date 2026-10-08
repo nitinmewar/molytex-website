@@ -1,0 +1,44 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
+const submitInquiry = vi.fn();
+vi.mock("@/lib/actions/submitInquiry", () => ({ submitInquiry: (fd: FormData) => submitInquiry(fd) }));
+
+import { ConsultationForm } from "@/components/home/ConsultationForm";
+
+function fill(label: string, value: string) {
+  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+}
+
+describe("ConsultationForm", () => {
+  beforeEach(() => submitInquiry.mockReset());
+
+  it("sends the fields the inquiry action expects and confirms success", async () => {
+    submitInquiry.mockResolvedValue({ success: true });
+    render(<ConsultationForm />);
+    fill("Your name", "Asha Rao");
+    fill("Email address", "asha@hospital.in");
+    fill("Phone number", "+91 98765 43210");
+    fill("Company Name", "City Hospital");
+    fill("Your message", "Need surgical consumables");
+    fireEvent.click(screen.getByRole("button", { name: /schedule a free consultation/i }));
+
+    await waitFor(() => expect(submitInquiry).toHaveBeenCalledOnce());
+    const fd: FormData = submitInquiry.mock.calls[0][0];
+    expect(fd.get("name")).toBe("Asha Rao");
+    expect(fd.get("organization")).toBe("City Hospital");
+    expect(fd.get("email")).toBe("asha@hospital.in");
+    expect(fd.get("phone")).toBe("+91 98765 43210");
+    expect(fd.get("message")).toBe("Need surgical consumables");
+    expect(await screen.findByRole("status")).toHaveTextContent(/thank you/i);
+  });
+
+  it("shows the server error and keeps the form when submission fails", async () => {
+    submitInquiry.mockResolvedValue({ success: false, error: "Please enter a valid email address." });
+    render(<ConsultationForm />);
+    fireEvent.click(screen.getByRole("button", { name: /schedule a free consultation/i }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Please enter a valid email address.");
+    expect(screen.getByLabelText("Your name")).toBeInTheDocument();
+  });
+});
