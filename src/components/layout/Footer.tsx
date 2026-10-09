@@ -79,13 +79,13 @@ export function Footer() {
                   <path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z" />
                   <circle cx="12" cy="10" r="2.5" />
                 </svg>
-                <span>Molytex Healthcare<br />[Office address], India</span>
+                <span>Molytex Healthcare<br />Plot No 21, KH No 375, Kanhaiya Madhopur, Lucknow</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 4h4l1.5 5-2 1.5a12 12 0 005 5l1.5-2 5 1.5v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" />
                 </svg>
-                <span>+91 [phone number]</span>
+                <a href="tel:+919580656456">+91 95806 56456</a>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
