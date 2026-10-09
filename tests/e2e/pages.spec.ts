@@ -131,10 +131,12 @@ test.describe("Certifications page", () => {
     const hrefs = await page.getByRole("link", { name: /view certificate/i }).evaluateAll((els) =>
       els.map((el) => el.getAttribute("href")),
     );
-    // CDSCO has no public certificate PDF yet, so its card shows no link.
-    expect(hrefs).toHaveLength(3);
-    const cdsco = page.locator("article", { hasText: "CDSCO Registration Certificate" });
-    await expect(cdsco.getByRole("link")).toHaveCount(0);
+    expect(hrefs).toEqual([
+      "/certificates/iso-9001.pdf",
+      "/certificates/iso-13485.pdf",
+      "/certificates/cdsco-registration.pdf",
+      "/certificates/dpiit-startup.pdf",
+    ]);
     for (const href of hrefs) {
       const res = await request.get(href!);
       expect(res.status(), href!).toBe(200);
@@ -165,6 +167,14 @@ test.describe("Privacy policy page", () => {
     await expect(page.locator("body")).not.toContainText("molytexhealthcare");
     await expect(page.locator("body")).not.toContainText("molytex.com");
     await expectImagesLoaded(page);
+  });
+
+  test("footer shows the office address and phone, with no placeholders", async ({ page }) => {
+    await page.goto("/");
+    const footer = page.locator("footer");
+    await expect(footer).toContainText("Plot No 21, KH No 375, Kanhaiya Madhopur, Lucknow");
+    await expect(footer.getByRole("link", { name: "+91 95806 56456" })).toHaveAttribute("href", "tel:+919580656456");
+    await expect(footer).not.toContainText("[");
   });
 
   test("footer links to the privacy policy", async ({ page }) => {
