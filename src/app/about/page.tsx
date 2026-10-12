@@ -36,7 +36,7 @@ export default function AboutPage() {
           </nav>
           <h1>About Molytex Healthcare</h1>
           <p className="phero-lead">
-            A healthcare-focused company committed to delivering reliable medical and surgical products across India.
+            Molytex is the medical and surgical products brand of MoleQule Products Pvt Ltd, an Indian company focused on serving hospitals, healthcare institutions and medical procurement professionals.
           </p>
         </div>
       </section>
