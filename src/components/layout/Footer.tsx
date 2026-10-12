@@ -72,7 +72,7 @@ export function Footer() {
                   <path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z" />
                   <circle cx="12" cy="10" r="2.5" />
                 </svg>
-                <span>Molytex Healthcare<br />Plot No 21, KH No 375, Kanhaiya Madhopur, Lucknow</span>
+                <span>MoleQule Products Pvt Ltd<br />Plot No 21, KH No 375, Kanhaiya Madhopur, Lucknow</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
@@ -91,11 +91,18 @@ export function Footer() {
             <Link href="/privacy-policy" className="footer-privacy-link">
               Privacy Policy
             </Link>
+            <Link href="/trademark" className="footer-privacy-link">
+              Trademark Notice
+            </Link>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <span>&copy; 2026 Molytex Healthcare. All rights reserved.</span>
+          <span>
+            &copy; 2026 MoleQule Products Pvt Ltd. All rights reserved.
+            <br />
+            Molytex is a trademark of MoleQule Products Pvt Ltd.
+          </span>
           <span>*AI-generated images used for illustrative purposes only.</span>
         </div>
       </div>

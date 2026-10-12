@@ -2,7 +2,8 @@ import { test, expect, type Page } from "@playwright/test";
 
 // Section heights (px) of each page's <main> children in the Figma "Final" frames at 1470px wide.
 const FIGMA_SECTIONS: Record<string, number[]> = {
-  "/about": [344, 776.33, 557.45, 493.4, 809.32, 347.38],
+  // About hero lead is the client's MoleQule copy (3 lines), not Figma's one-liner.
+  "/about": [372.23, 776.33, 557.45, 493.4, 809.32, 347.38],
   "/certifications": [401.46, 358.46, 809.32, 629.58, 361.17],
   // Copy differs from Figma (molytexproducts.com URLs, spaces after "ID;" and "us;") but still wraps to 39 lines.
   "/privacy-policy": [401.46, 1475.47],
@@ -226,5 +227,43 @@ test.describe("Privacy policy page", () => {
     await page.goto("/");
     await page.locator("footer").getByRole("link", { name: "Privacy Policy" }).click();
     await expect(page).toHaveURL(/\/privacy-policy$/);
+  });
+});
+
+test.describe("Company and trademark text", () => {
+  test("footer names MoleQule Products as owner of the Molytex mark", async ({ page }) => {
+    await page.goto("/");
+    const footer = page.locator("footer");
+    await expect(footer).toContainText("© 2026 MoleQule Products Pvt Ltd. All rights reserved.");
+    await expect(footer).toContainText("Molytex is a trademark of MoleQule Products Pvt Ltd.");
+    await expect(footer).toContainText("MoleQule Products Pvt LtdPlot No 21");
+    await expect(footer).not.toContainText("Molytex Healthcare. All rights reserved");
+  });
+
+  test("footer links to the trademark notice", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("footer").getByRole("link", { name: "Trademark Notice" }).click();
+    await expect(page).toHaveURL(/\/trademark$/);
+  });
+
+  test("trademark page shows the full notice", async ({ page }) => {
+    await loadFully(page, "/trademark");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Intellectual Property & Trademark Notice" }),
+    ).toBeVisible();
+    await expect(page.locator("main")).toContainText(
+      "Unauthorised use of these marks is prohibited, subject to applicable law.",
+    );
+    await expect(page.locator("main")).toContainText(
+      "All website content, product descriptions, graphics and other materials are protected",
+    );
+    await expectImagesLoaded(page);
+  });
+
+  test("about hero describes Molytex as a MoleQule brand", async ({ page }) => {
+    await page.goto("/about");
+    await expect(page.locator(".phero-lead")).toContainText(
+      "Molytex is the medical and surgical products brand of MoleQule Products Pvt Ltd",
+    );
   });
 });

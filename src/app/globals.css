@@ -337,6 +337,7 @@ section{ position:relative; }
   transition:color .2s;
 }
 .footer-privacy-link:hover{ color:var(--green); }
+.footer-privacy-link + .footer-privacy-link{ display:block; width:fit-content; margin-top:10px; }
 .footer-bottom{
   display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
   padding-top:26px; font-size:.86rem; color:rgba(255,255,255,.5);
