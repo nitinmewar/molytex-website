@@ -22,15 +22,29 @@ async function expectImagesLoaded(page: Page) {
 
 async function loadFully(page: Page, path: string) {
   await page.goto(path);
-  // Lazy images only load once scrolled near the viewport.
+  // Lazy images only load once scrolled near the viewport. Instant, because the site's smooth scrolling
+  // otherwise cancels each step and the bottom of a long page is never reached.
   await page.evaluate(async () => {
     for (let y = 0; y < document.body.scrollHeight; y += 600) {
-      window.scrollTo(0, y);
+      window.scrollTo({ top: y, behavior: "instant" });
       await new Promise((r) => setTimeout(r, 60));
     }
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: "instant" });
   });
   await page.waitForLoadState("networkidle");
+  // On long pages, lazy images can still be in flight after networkidle; settle each (load or error).
+  await page.evaluate(() =>
+    Promise.all(
+      [...document.images].map(
+        (i) =>
+          i.complete ||
+          new Promise((r) => {
+            i.addEventListener("load", r, { once: true });
+            i.addEventListener("error", r, { once: true });
+          }),
+      ),
+    ),
+  );
 }
 
 test.describe("Figma geometry at 1470px", () => {
