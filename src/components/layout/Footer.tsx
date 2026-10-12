@@ -1,21 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ContactButton } from "@/components/contact/ContactButton";
+import { CATEGORIES } from "@/lib/products";
 
 const QUICK_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
   { href: "/products", label: "Products" },
   { href: "/certifications", label: "Certifications" },
-];
-
-const PRODUCT_CATEGORIES = [
-  "Surgical Consumables",
-  "Orthopedic Products",
-  "Rehabilitation Aids",
-  "Hospital Disposables",
-  "Infection Control",
-  "Medical Accessories",
 ];
 
 export function Footer() {
@@ -63,11 +55,12 @@ export function Footer() {
           <div className="footer-col">
             <h5>Product Categories</h5>
             <ul>
-              {PRODUCT_CATEGORIES.map((cat) => (
-                <li key={cat}>
-                  <Link href="/products">{cat}</Link>
+              {CATEGORIES.slice(0, 6).map((c) => (
+                <li key={c.id}>
+                  <Link href={`/products#${c.id}`}>{c.name}</Link>
                 </li>
               ))}
+              <li><Link href="/products">View all products</Link></li>
             </ul>
           </div>
 

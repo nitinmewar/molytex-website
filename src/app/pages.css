@@ -113,16 +113,23 @@
 .cat-bar-inner{ max-width:1120px; margin-inline:auto; height:63px; display:flex; align-items:center; gap:4px; overflow-x:auto; scrollbar-width:none; }
 .cat-bar a{ flex-shrink:0; padding:8px 16px; border-radius:999px; font-size:13.6px; line-height:22.44px; font-weight:600; color:var(--ink); transition:background .2s, color .2s; }
 .cat-bar a:hover{ background:var(--blue-tint); color:var(--blue); }
+@media (hover:hover){
+  /* 14 categories overflow the bar; a mouse needs a visible scrollbar to reach them. */
+  .cat-bar-inner{ scrollbar-width:thin; }
+}
 
 .prow{ padding-block:90px; scroll-margin-top:130px; }
 .prow.grey{ background:var(--bg); }
 .prow-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:80px; align-items:center; }
+.prow-gallery{ display:grid; gap:20px; }
 .prow-media{ position:relative; aspect-ratio:516/387; border-radius:20px; overflow:hidden; }
-.prow.flip .prow-media{ order:2; }
+.prow.flip .prow-gallery{ order:2; }
 .prow-copy{ padding-top:1.5px; }
 .prow-num{ display:inline-flex; padding:4px 12px; border-radius:999px; background:var(--blue-tint); color:var(--blue); font-size:12.5px; line-height:20.59px; font-weight:700; }
 .prow-copy h2{ font-size:33.6px; line-height:36.29px; letter-spacing:-.672px; color:var(--ink); margin-top:15.25px; }
 .prow-copy p{ font-size:16.8px; line-height:27.3px; color:var(--muted); text-wrap:wrap; }
+.prow-copy p + p{ margin-top:12px; }
+.prow-copy strong{ color:var(--ink); }
 .prow-list{ display:flex; flex-direction:column; gap:12px; }
 .prow-list li{ display:flex; gap:12px; font-size:17px; line-height:28px; color:var(--ink-2); }
 .prow-list img{ margin-top:2px; flex-shrink:0; }
@@ -162,7 +169,7 @@
   .phero-img{ height:clamp(180px,32vw,300px); }
   .mv-grid, .prow-grid, .pillars-grid{ grid-template-columns:minmax(0,1fr); }
   .prow-grid{ gap:32px; }
-  .prow.flip .prow-media{ order:0; }
+  .prow.flip .prow-gallery{ order:0; }
   .ph-head h2, .ph-head.lg h2, .pcta h2, .pcta-certs h2, .prow-copy h2{ font-size:clamp(1.6rem,6vw,2.2rem); line-height:1.12; }
   .policy{ padding-block:64px; }
   .policy h1{ font-size:clamp(1.8rem,7vw,2.4rem); line-height:1.1; }
