@@ -3,7 +3,6 @@ import { test, expect, type Page } from "@playwright/test";
 // Section heights (px) of each page's <main> children in the Figma "Final" frames at 1470px wide.
 const FIGMA_SECTIONS: Record<string, number[]> = {
   "/about": [344, 776.33, 557.45, 493.4, 809.32, 347.38],
-  "/products": [395.21, 64, 567, 567, 567, 567, 567, 567, 344.87],
   "/certifications": [401.46, 358.46, 809.32, 629.58, 361.17],
   // Copy differs from Figma (molytexproducts.com URLs, spaces after "ID;" and "us;") but still wraps to 39 lines.
   "/privacy-policy": [401.46, 1475.47],
@@ -87,39 +86,71 @@ test.describe("About page", () => {
 });
 
 test.describe("Products page", () => {
-  const categories = [
-    ["Surgical Consumables", "surgical-consumables"],
-    ["Orthopedic Products", "orthopedic-products"],
-    ["Rehabilitation Aids", "rehabilitation-aids"],
-    ["Hospital Disposables", "hospital-disposables"],
-    ["Infection Control", "infection-control"],
-    ["Medical Accessories", "medical-accessories"],
+  // [heading, id, bullet count, image count]
+  const categories: [string, string, number, number][] = [
+    ["Surgical Instruments", "surgical-instruments", 6, 1],
+    ["3-Ply Surgical Masks", "three-ply-surgical-masks", 5, 1],
+    ["Cautery Tip Cleaners", "cautery-tip-cleaners", 5, 1],
+    ["Examination Gloves", "examination-gloves", 2, 1],
+    ["Hand Sanitiser", "hand-sanitiser", 0, 1],
+    ["LS Belts", "ls-belts", 0, 1],
+    ["Knee Caps & Rehabilitation Aids", "knee-caps-rehabilitation-aids", 0, 2],
+    ["Custom Packs - Surgical & Draping Kits", "custom-packs", 5, 1],
+    ["Surgical Skin Marker Pens", "surgical-skin-marker-pens", 0, 1],
+    ["Bed Bath Wipes", "bed-bath-wipes", 3, 1],
+    ["Absorbent Cotton", "absorbent-cotton", 2, 1],
+    ["Absorbent Gauze Thaan", "absorbent-gauze-thaan", 2, 1],
+    ["Patient Identification Tags", "patient-identification-tags", 0, 1],
+    ["Mother & Baby Soft Tags", "mother-baby-soft-tags", 0, 1],
   ];
 
-  test("has six numbered categories with loaded photos", async ({ page }) => {
+  test("has fourteen numbered categories with loaded photos", async ({ page }) => {
     await loadFully(page, "/products");
     await expect(page.getByRole("heading", { level: 1, name: "Our Product Portfolio" })).toBeVisible();
-    for (const [i, [name, id]] of categories.entries()) {
+    await expect(page.locator("section.prow")).toHaveCount(categories.length);
+    for (const [i, [name, id, bullets, images]] of categories.entries()) {
       const row = page.locator(`section#${id}`);
-      await expect(row.getByRole("heading", { level: 2, name })).toBeVisible();
-      await expect(row.getByText(`0${i + 1}`, { exact: true })).toBeVisible();
-      await expect(row.locator("li")).toHaveCount(3);
+      await expect(row.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
+      await expect(row.getByText(String(i + 1).padStart(2, "0"), { exact: true })).toBeVisible();
+      await expect(row.locator("li")).toHaveCount(bullets);
+      await expect(row.locator(".prow-media img")).toHaveCount(images);
     }
     await expectImagesLoaded(page);
+  });
+
+  test("shows the client's copy word for word", async ({ page }) => {
+    await page.goto("/products");
+    await expect(page.locator("section#cautery-tip-cleaners")).toContainText("Compatibility with cautery instruments");
+    await expect(page.locator("section#absorbent-gauze-thaan")).toContainText("Two lengths – 18 mtr & 3 mtr");
+    for (const id of ["ls-belts", "knee-caps-rehabilitation-aids"]) {
+      await expect(page.locator(`section#${id} strong`)).toContainText(
+        "Cost-effective institutional packaging available for hospitals, government procurement",
+      );
+    }
   });
 
   test("category bar links to every row", async ({ page }) => {
     await page.goto("/products");
     const nav = page.getByRole("navigation", { name: "Product categories" });
     for (const [name, id] of categories) {
-      await expect(nav.getByRole("link", { name })).toHaveAttribute("href", `#${id}`);
+      await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute("href", `#${id}`);
     }
   });
 
   test("row Contact Us opens the contact dialog", async ({ page }) => {
     await page.goto("/products");
-    await page.locator("section#infection-control").getByRole("button", { name: "Contact Us" }).click();
+    await page.locator("section#examination-gloves").getByRole("button", { name: "Contact Us" }).click();
     await expect(page.locator("dialog[open]")).toBeVisible();
+  });
+
+  test("footer lists six new categories and a link to all products", async ({ page }) => {
+    await page.goto("/");
+    const col = page.locator(".footer-col", { has: page.getByRole("heading", { name: "Product Categories" }) });
+    for (const [name, id] of categories.slice(0, 6)) {
+      await expect(col.getByRole("link", { name, exact: true })).toHaveAttribute("href", `/products#${id}`);
+    }
+    await expect(col.getByRole("link", { name: "View all products" })).toHaveAttribute("href", "/products");
+    await expect(page.locator("footer")).not.toContainText("Medical Accessories");
   });
 });
 
